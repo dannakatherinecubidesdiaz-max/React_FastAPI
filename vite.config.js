@@ -1,0 +1,17 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    // Proxy hacia la API de Spring Boot (evita problemas de CORS en desarrollo)
+    proxy: {
+      '/api': {
+        target: 'http://localhost:31026',
+        changeOrigin: true,
+      },
+    },
+  },
+});
