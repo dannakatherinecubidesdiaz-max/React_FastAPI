@@ -32,3 +32,5 @@ backend/*.db
 .env
 .env.*
 !.env.example
+/React_Fast_API
+/React_FastAPI
