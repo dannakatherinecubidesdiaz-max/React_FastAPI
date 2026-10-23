@@ -50,7 +50,8 @@ npm run dev
 ## Backend de ejemplo con FastAPI
 
 El backend FastAPI vive en `backend/` y puede ejecutarse junto al frontend.
-Incluye CRUD para `Item`, SQLAlchemy con SQLite, esquemas de Pydantic v2 y CORS
+Incluye CRUD para artículos, servicios, citas y clientes, SQLAlchemy con SQLite,
+esquemas de Pydantic v2 y CORS
 para el origen de desarrollo de Vite (`http://localhost:5173`). La base de datos
 `backend/items.db` se crea automáticamente al iniciar el servidor.
 
@@ -60,11 +61,14 @@ para el origen de desarrollo de Vite (`http://localhost:5173`). La base de datos
 backend/
 ├── app/
 │   ├── routers/
-│   │   └── items.py      # Endpoints CRUD y documentación OpenAPI
+│   │   ├── items.py      # Endpoints CRUD de artículos
+│   │   ├── servicios.py  # Endpoints CRUD de servicios
+│   │   ├── citas.py      # Endpoints CRUD de citas
+│   │   └── clientes.py   # Endpoints CRUD y búsqueda de clientes
 │   ├── crud.py           # Consultas y operaciones de persistencia
 │   ├── database.py       # Motor, Base declarativa y sesión reutilizable
 │   ├── main.py           # FastAPI, CORS y registro de rutas
-│   ├── models.py         # Modelo SQLAlchemy Item
+│   ├── models.py         # Modelos SQLAlchemy de artículos, servicios, citas y clientes
 │   └── schemas.py        # Validación y serialización Pydantic v2
 └── requirements.txt
 ```
@@ -85,6 +89,14 @@ interactiva de Swagger está en `http://localhost:8000/docs`.
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
+| `GET`, `POST` | `/api/servicios` | Lista o crea servicios |
+| `GET`, `PUT`, `DELETE` | `/api/servicios/{servicio_id}` | Consulta, actualiza o elimina un servicio |
+| `GET`, `POST` | `/api/citas` | Lista o crea citas |
+| `GET`, `PUT`, `DELETE` | `/api/citas/{cita_id}` | Consulta, actualiza o elimina una cita |
+| `GET` | `/api/citas/cliente/{cliente_id}` | Lista las citas de un cliente |
+| `GET`, `POST` | `/api/clientes` | Lista o crea clientes |
+| `GET`, `PUT`, `DELETE` | `/api/clientes/{cliente_id}` | Consulta, actualiza o elimina un cliente |
+| `GET` | `/api/clientes/buscar?q={termino}` | Busca clientes por nombre o email |
 | `POST` | `/api/items` | Crea un artículo (respuesta `201`) |
 | `GET` | `/api/items` | Lista artículos; admite `skip` y `limit` |
 | `GET` | `/api/items/{item_id}` | Obtiene un artículo por ID |
@@ -94,6 +106,14 @@ interactiva de Swagger está en `http://localhost:8000/docs`.
 Las rutas por ID devuelven `404` cuando el artículo no existe. La creación y
 actualización validan nombre (1–100 caracteres), descripción (hasta 500) y
 precio no negativo.
+
+Los routers nuevos exponen CRUD para servicios (`/api/servicios`), citas
+(`/api/citas`) y clientes (`/api/clientes`). También incluyen la búsqueda
+`GET /api/clientes/buscar?q={termino}` y la consulta
+`GET /api/citas/cliente/{cliente_id}`. Los campos JSON usan camelCase para
+coincidir con React, por ejemplo `duracionMin`, `clienteId` y `servicioId`.
+Las citas requieren un cliente y servicio existentes, y no se permite eliminar
+clientes o servicios con citas asociadas.
 
 Para consumir este ejemplo desde React con el cliente Axios existente, configura
 `VITE_API_URL=http://localhost:8000/api` en el entorno del frontend y llama, por
