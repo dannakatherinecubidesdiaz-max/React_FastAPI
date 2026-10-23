@@ -5,7 +5,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
+from app.routers.citas import router as citas_router
+from app.routers.clientes import router as clientes_router
 from app.routers.items import router as items_router
+from app.routers.servicios import router as servicios_router
 
 
 @asynccontextmanager
@@ -16,7 +19,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Salon Glitt API",
-    description="API de ejemplo para gestionar artículos desde React.",
+    description="API para gestionar artículos, servicios, citas y clientes desde React.",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -30,3 +33,6 @@ app.add_middleware(
 )
 
 app.include_router(items_router, prefix="/api")
+app.include_router(servicios_router, prefix="/api")
+app.include_router(citas_router, prefix="/api")
+app.include_router(clientes_router, prefix="/api")
